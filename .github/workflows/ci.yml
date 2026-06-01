@@ -24,7 +24,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          pip install mlflow==2.19.0 scikit-learn pandas numpy dagshub matplotlib conda
+          pip install mlflow==2.19.0 scikit-learn pandas numpy dagshub matplotlib
 
       - name: Setup DagsHub Credentials
         env:
