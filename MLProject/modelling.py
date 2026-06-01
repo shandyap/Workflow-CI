@@ -96,3 +96,9 @@ with mlflow.start_run(nested=True):
     print(f"Precision : {prec:.4f}")
     print(f"Recall    : {rec:.4f}")
     print(f"F1 Score  : {f1:.4f}")
+
+    # Simpan run ID untuk Docker build
+    run_id = mlflow.active_run().info.run_id
+    with open('run_id.txt', 'w') as f:
+        f.write(run_id)
+    print(f"Run ID: {run_id}")
