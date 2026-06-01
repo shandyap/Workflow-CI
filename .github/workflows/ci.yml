@@ -36,16 +36,13 @@ jobs:
 
       - name: Run MLflow Project
         env:
-          MLFLOW_TRACKING_URI: ${{ env.MLFLOW_TRACKING_URI }}
-          MLFLOW_TRACKING_USERNAME: ${{ env.MLFLOW_TRACKING_USERNAME }}
-          MLFLOW_TRACKING_PASSWORD: ${{ env.MLFLOW_TRACKING_PASSWORD }}
+          MLFLOW_TRACKING_URI: https://dagshub.com/shandylatoz851/Obesity-MLflow.mlflow
+          MLFLOW_TRACKING_USERNAME: shandylatoz851
+          MLFLOW_TRACKING_PASSWORD: ${{ secrets.DAGSHUB_TOKEN }}
         run: |
           cd MLProject
-          mlflow run . --env-manager=local \
-            -P n_estimators=200 \
-            -P max_depth=10 \
-            -P min_samples_split=5
-
+          mlflow run . --env-manager=local -P n_estimators=200 -P max_depth=10 -P min_samples_split=5
+      
       - name: Upload Artifact to GitHub
         uses: actions/upload-artifact@v4
         with:

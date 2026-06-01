@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 import numpy as np
 import mlflow
 import mlflow.sklearn
@@ -27,11 +28,11 @@ args = parser.parse_args()
 # ========================
 # Setup DagsHub & MLflow
 # ========================
-dagshub.init(
-    repo_owner='shandylatoz851',
-    repo_name='Obesity-MLflow',
-    mlflow=True
-)
+os.environ['MLFLOW_TRACKING_URI'] = os.getenv('MLFLOW_TRACKING_URI', '')
+os.environ['MLFLOW_TRACKING_USERNAME'] = os.getenv('MLFLOW_TRACKING_USERNAME', '')
+os.environ['MLFLOW_TRACKING_PASSWORD'] = os.getenv('MLFLOW_TRACKING_PASSWORD', '')
+
+mlflow.set_tracking_uri(os.environ['MLFLOW_TRACKING_URI'])
 
 # ========================
 # Load Data
