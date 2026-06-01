@@ -1,12 +1,11 @@
 import pandas as pd
-import os
 import numpy as np
 import mlflow
 import mlflow.sklearn
-import dagshub
 import argparse
 import matplotlib.pyplot as plt
 import json
+import os
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import (
@@ -15,6 +14,15 @@ from sklearn.metrics import (
     confusion_matrix, classification_report,
     ConfusionMatrixDisplay
 )
+
+# ========================
+# Setup MLflow
+# ========================
+os.environ['MLFLOW_TRACKING_URI'] = os.getenv('MLFLOW_TRACKING_URI', '')
+os.environ['MLFLOW_TRACKING_USERNAME'] = os.getenv('MLFLOW_TRACKING_USERNAME', '')
+os.environ['MLFLOW_TRACKING_PASSWORD'] = os.getenv('MLFLOW_TRACKING_PASSWORD', '')
+
+mlflow.set_tracking_uri(os.environ['MLFLOW_TRACKING_URI'])
 
 # ========================
 # Argument Parser
@@ -26,18 +34,11 @@ parser.add_argument('--min_samples_split', type=int, default=5)
 args = parser.parse_args()
 
 # ========================
-# Setup DagsHub & MLflow
-# ========================
-os.environ['MLFLOW_TRACKING_URI'] = os.getenv('MLFLOW_TRACKING_URI', '')
-os.environ['MLFLOW_TRACKING_USERNAME'] = os.getenv('MLFLOW_TRACKING_USERNAME', '')
-os.environ['MLFLOW_TRACKING_PASSWORD'] = os.getenv('MLFLOW_TRACKING_PASSWORD', '')
-
-mlflow.set_tracking_uri(os.environ['MLFLOW_TRACKING_URI'])
-
-# ========================
 # Load Data
 # ========================
-df = pd.read_csv('ObesityDataSet_preprocessing.csv')
+base_dir = os.path.dirname(os.path.abspath(__file__))
+csv_path = os.path.join(base_dir, 'ObesityDataSet_preprocessing.csv')
+df = pd.read_csv(csv_path)
 
 X = df.drop('NObeyesdad', axis=1)
 y = df['NObeyesdad']
@@ -47,11 +48,9 @@ X_train, X_test, y_train, y_test = train_test_split(
 )
 
 # ========================
-# Training
+# Training dengan active run dari MLflow Project
 # ========================
-mlflow.set_experiment('Obesity_CI_Pipeline')
-
-with mlflow.start_run(run_name='RandomForest_CI'):
+with mlflow.start_run(nested=True):
 
     model = RandomForestClassifier(
         n_estimators=args.n_estimators,
