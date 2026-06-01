@@ -58,10 +58,16 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Docker Image
+        env:
+          MLFLOW_TRACKING_URI: https://dagshub.com/shandylatoz851/Obesity-MLflow.mlflow
+          MLFLOW_TRACKING_USERNAME: shandylatoz851
+          MLFLOW_TRACKING_PASSWORD: ${{ secrets.DAGSHUB_TOKEN }}
         run: |
+          RUN_ID=$(cat MLProject/run_id.txt)
           mlflow models build-docker \
-            --model-uri "runs:/$(cat MLProject/run_id.txt)/model" \
-            --name "${{ secrets.DOCKER_USERNAME }}/obesity-mlflow:latest"
+            --model-uri "runs:/$RUN_ID/model" \
+            --name "${{ secrets.DOCKER_USERNAME }}/obesity-mlflow:latest" \
+            --env-manager local
 
       - name: Push Docker Image to Docker Hub
         run: |
